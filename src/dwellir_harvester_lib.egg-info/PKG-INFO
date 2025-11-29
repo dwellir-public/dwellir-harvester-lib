@@ -57,3 +57,17 @@ python -m dwellir_harvester.lib.run examples.plugins.sample_collector:SamplePlug
 - Python 3.9+
 - Entry point group for collectors: `dwellir_harvester.collectors`
 - Bundled schema is included as package data under `dwellir_harvester/data/`
+
+## Building (offline-friendly)
+Use the sibling checkout pattern:
+1. Make sure you have a venv with build tools (and system site packages to avoid missing setuptools):
+   ```bash
+   python3 -m venv --system-site-packages .venv
+   source .venv/bin/activate
+   pip install --upgrade pip build
+   ```
+2. Build the library without isolation (reuses your env, no downloads):
+   ```bash
+   python -m build --no-isolation
+   ```
+Artifacts land in `dist/` (`.whl` and `.tar.gz`). If you depend on this from the app as a sibling path, the existing `file:../dwellir-harvester-lib` PEP 508 spec in the app works; for publishing, set a versioned requirement there instead.

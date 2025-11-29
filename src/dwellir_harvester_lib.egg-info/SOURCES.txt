@@ -11,15 +11,11 @@ src/dwellir_harvester/rpc_evm.py
 src/dwellir_harvester/rpc_substrate.py
 src/dwellir_harvester/systemd_utils.py
 src/dwellir_harvester/collectors/__init__.py
-src/dwellir_harvester/collectors/_reth_common.py
-src/dwellir_harvester/collectors/_substrate_common.py
 src/dwellir_harvester/collectors/dummychain.py
 src/dwellir_harvester/collectors/host.py
 src/dwellir_harvester/collectors/juju.py
 src/dwellir_harvester/collectors/null.py
 src/dwellir_harvester/collectors/polkadot.py
-src/dwellir_harvester/collectors/reth.py
-src/dwellir_harvester/collectors/substrate.py
 src/dwellir_harvester/data/blockchain_node_metadata.schema.json
 src/dwellir_harvester/lib/__init__.py
 src/dwellir_harvester/lib/run.py
