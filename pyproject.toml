@@ -14,7 +14,9 @@ dependencies = [
     "psutil>=5.9.8",
     "PyYAML>=6.0",
 ]
+
 license = { text = "MIT" }
+
 classifiers = [
   "Programming Language :: Python :: 3",
   "Programming Language :: Python :: 3.9",
@@ -28,6 +30,8 @@ classifiers = [
 
 [tool.setuptools]
 package-dir = {"" = "src"}
+license-files = []  # disable auto license-file metadata emission
+
 
 [tool.setuptools.package-data]
 "dwellir_harvester" = ["data/*.json"]

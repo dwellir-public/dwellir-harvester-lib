@@ -28,7 +28,12 @@ print(result)
 
 Run a collector class directly (module:Class):
 ```bash
+# Built-in null collector
+python -m dwellir_harvester.lib.run dwellir_harvester.collectors.null:NullCollector
+
+# From the dwellir_harvester package
 python -m dwellir_harvester.lib.run examples.plugins.sample_collector:SamplePluginCollector
+
 ```
 
 ## Packaging notes
@@ -49,3 +54,25 @@ Use the sibling checkout pattern:
    python -m build --no-isolation
    ```
 Artifacts land in `dist/` (`.whl` and `.tar.gz`). If you depend on this from the app as a sibling path, the existing `file:../dwellir-harvester-lib` PEP 508 spec in the app works; for publishing, set a versioned requirement there instead.
+
+
+## Publish (Python package)
+
+```bash
+# build
+python3 -m pip install build twine
+python3 -m build  # creates dist/*.tar.gz and dist/*.whl
+
+# upload to TestPyPI first (recommended)
+python3 -m twine upload -r testpypi dist/*
+
+# Install from testpypi
+python3 -m venv .venv
+source .venv/bin/activate
+# Pull in deps from real, this is needed only on testpypi 
+pip3 install jsonschema>=4.25.1 psutil>=7.1.3 requests>=2.32.5
+# Install from testpypi
+pip3 install --index-url https://test.pypi.org/simple/ --no-deps dwellir-harvester-lib
+
+# then to PyPI
+python3 -m twine upload dist/*
