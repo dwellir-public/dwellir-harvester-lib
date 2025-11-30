@@ -3,6 +3,13 @@
 This package provides base classes for creating collectors and specific collector
 implementations for different blockchain clients and system information.
 """
+from importlib.metadata import PackageNotFoundError, version
+
+try:
+    __version__ = version("dwellir-harvester-lib")
+except PackageNotFoundError:
+    __version__ = "0.0.0"
+
 # Base classes
 from .collector_base import (
     BlockchainCollector,
@@ -23,7 +30,8 @@ __all__ = [
     "BlockchainCollector",
     "GenericCollector",
     "CollectorError",
-    
+    "__version__",
+
     # Concrete collectors
     "NullCollector",
     "DummychainCollector",

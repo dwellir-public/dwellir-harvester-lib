@@ -6,6 +6,7 @@ import platform
 import os
 import logging
 from . import __version__
+import importlib.metadata
 import socket
 import time
 import sys
@@ -300,6 +301,12 @@ def collect_all(
     debug: bool = False,
     plugin_paths: Optional[List[str]] = None
 ) -> Dict[str, Any]:
+    # Try to surface the app package version; fall back to the lib version
+    try:
+        harvester_version = importlib.metadata.version("dwellir-harvester")
+    except importlib.metadata.PackageNotFoundError:
+        harvester_version = getattr(__version__, "__version__", "0.0.0")
+
     """Run multiple collectors and merge their results.
     
     Args:
@@ -329,7 +336,7 @@ def collect_all(
     # Initialize the result structure
     result = {
         "harvester": {
-            "harvester-version": __version__.__version__,
+            "harvester-version": harvester_version,
             "collection_time": collection_time,
             "collectors_used": collector_names.copy()  # Make a copy to avoid modifying the input
         },
