@@ -196,13 +196,20 @@ def collect_system_info() -> Dict[str, Any]:
     
     return system_info
 
-def run_collector(collector_name: str, schema_path: str = None, debug: bool = False, plugin_paths: Optional[List[str]] = None) -> Dict[str, Any]:
+def run_collector(
+    collector_name: str,
+    schema_path: str = None,
+    debug: bool = False,
+    plugin_paths: Optional[List[str]] = None,
+    collector_kwargs: Optional[Dict[str, Dict[str, Any]]] = None,
+) -> Dict[str, Any]:
     """Run a single collector and return its result.
     
     Args:
         collector_name: Name of the collector to run
         schema_path: Optional path to the JSON schema file for validation
         debug: If True, include detailed debug information in the output
+        collector_kwargs: Optional mapping of collector name -> kwargs to pass into CollectorCls.create(**kwargs)
         
     Returns:
         Dict containing the collector's result with 'meta' and 'data' keys
@@ -216,9 +223,16 @@ def run_collector(collector_name: str, schema_path: str = None, debug: bool = Fa
             raise CollectorFailedError(error_msg)
 
         CollectorCls = collectors[collector_name]
+        kwargs_for_collector = (collector_kwargs or {}).get(collector_name, {})
         
         try:
-            collector = CollectorCls.create()
+            if hasattr(CollectorCls, "create"):
+                try:
+                    collector = CollectorCls.create(**kwargs_for_collector)
+                except TypeError:
+                    collector = CollectorCls.create()
+            else:
+                collector = CollectorCls(**kwargs_for_collector)
         except Exception as e:
             if debug:
                 import traceback
@@ -299,7 +313,8 @@ def collect_all(
     schema_path: str,
     validate: bool = True,
     debug: bool = False,
-    plugin_paths: Optional[List[str]] = None
+    plugin_paths: Optional[List[str]] = None,
+    collector_kwargs: Optional[Dict[str, Dict[str, Any]]] = None,
 ) -> Dict[str, Any]:
     # Try to surface the app package version; fall back to the lib version
     try:
@@ -347,7 +362,13 @@ def collect_all(
     # Run all collectors, including host
     for name in collector_names:
         try:
-            collector_result = run_collector(name, schema_path, debug=debug, plugin_paths=plugin_paths)
+            collector_result = run_collector(
+                name,
+                schema_path,
+                debug=debug,
+                plugin_paths=plugin_paths,
+                collector_kwargs=collector_kwargs,
+            )
             
             # Handle the collector result
             collector_data = {
